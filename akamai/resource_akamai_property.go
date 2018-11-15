@@ -304,14 +304,23 @@ func resourcePropertyImport(d *schema.ResourceData, meta interface{}) ([]*schema
 	if e != nil {
 		return nil, e
 	}
+	hostnames, err := property.GetHostnames(nil)
+	if err != nil {
+		return nil, err
+	}
+	hostname := make([]string, 0)
+	for _, host := range hostnames.Hostnames.Items {
+		hostname = append(hostname, host.CnameFrom)
+	}
 
-	d.Set("account_id", property.AccountID)
+	//d.Set("account_id", property.AccountID)
 	d.Set("contract_id", property.ContractID)
 	d.Set("group_id", property.GroupID)
 	//d.Set("clone_from", property.CloneFrom.PropertyID)
 	d.Set("name", property.PropertyName)
-	d.Set("version", property.LatestVersion)
+	//d.Set("version", property.LatestVersion)
 	d.SetId(property.PropertyID)
+	d.Set("hostname", hostname)
 
 	return []*schema.ResourceData{d}, nil
 }
